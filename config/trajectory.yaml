@@ -1,0 +1,185 @@
+marsupial_ugv:
+  poses0:
+    pose:
+      position: {x: 0.0, y: 0.0}
+  poses1:
+    pose:
+      position: {x: 1.2, y: 1.76}
+  poses2:
+    pose:
+      position: {x: 2.4, y: 2.85}
+  poses3:
+    pose:
+      position: {x: 3.6, y: 2.85}
+  poses4:
+    pose:
+      position: {x: 4.8, y: 1.76}
+  poses5:
+    pose:
+      position: {x: 6.0, y: 0.0}
+  poses6:
+    pose:
+      position: {x: 7.2, y: -1.76}
+  poses7:
+    pose:
+      position: {x: 8.4, y: -2.85}
+  poses8:
+    pose:
+      position: {x: 9.6, y: -2.85}
+  poses9:
+    pose:
+      position: {x: 10.8, y: -1.76}
+  poses10:
+    pose:
+      position: {x: 12.0, y: 0.0}
+  poses11:
+    pose:
+      position: {x: 13.2, y: 1.76}
+  poses12:
+    pose:
+      position: {x: 14.4, y: 2.85}
+  poses13:
+    pose:
+      position: {x: 15.6, y: 2.85}
+  poses14:
+    pose:
+      position: {x: 16.8, y: 1.76}
+  poses15:
+    pose:
+      position: {x: 18.0, y: 0.0}
+  poses16:
+    pose:
+      position: {x: 19.2, y: -1.76}
+  poses17:
+    pose:
+      position: {x: 20.4, y: -2.85}
+  poses18:
+    pose:
+      position: {x: 21.6, y: -2.85}
+  poses19:
+    pose:
+      position: {x: 22.8, y: -1.76}
+  poses20:
+    pose:
+      position: {x: 24.0, y: 0.0}
+  poses21:
+    pose:
+      position: {x: 25.2, y: 1.76}
+  poses22:
+    pose:
+      position: {x: 26.4, y: 2.85}
+  poses23:
+    pose:
+      position: {x: 27.6, y: 2.85}
+  poses24:
+    pose:
+      position: {x: 28.8, y: 1.76}
+  poses25:
+    pose:
+      position: {x: 30.0, y: 0.0}
+marsupial_uav:
+  poses0:
+    pose:
+      position: {x: 0.5, y: 0.0, z: 5.0}
+  poses1:
+    pose:
+      position: {x: 1.83, y: 1.23, z: 5.5}
+  poses2:
+    pose:
+      position: {x: 2.79, y: 2.52, z: 4.0}
+  poses3:
+    pose:
+      position: {x: 3.73, y: 2.76, z: 3.0}
+  poses4:
+    pose:
+      position: {x: 4.68, y: 1.81, z: 3.7}
+  poses5:
+    pose:
+      position: {x: 6.03, y: 0.12, z: 4.14}
+  poses6:
+    pose:
+      position: {x: 7.43, y: -1.34, z: 5.74}
+  poses7:
+    pose:
+      position: {x: 8.02, y: -2.63, z: 6.14}
+  poses8:
+    pose:
+      position: {x: 9.24, y: -2.82, z: 7.60}
+  poses9:
+    pose:
+      position: {x: 10.53, y: -1.97, z: 8.07}
+  poses10:
+    pose:
+      position: {x: 11.93, y: 0.23, z: 9.77}
+  poses11:
+    pose:
+      position: {x: 13.32, y: 1.33, z: 9.83}
+  poses12:
+    pose:
+      position: {x: 14.56, y: 2.44, z: 10.09}
+  poses13:
+    pose:
+      position: {x: 15.54, y: 2.54, z: 10.59}
+  poses14:
+    pose:
+      position: {x: 16.51, y: 1.59, z: 11.09}
+  poses15:
+    pose:
+      position: {x: 17.45, y: 0.31, z: 11.33}
+  poses16:
+    pose:
+      position: {x: 18.04, y: -1.47, z: 11.21}
+  poses17:
+    pose:
+      position: {x: 19.14, y: -2.68, z: 9.87}
+  poses18:
+    pose:
+      position: {x: 20.38, y: -2.72, z: 8.47}
+  poses19:
+    pose:
+      position: {x: 21.64, y: -1.86, z: 7.11}
+  poses20:
+    pose:
+      position: {x: 22.87, y: 0.16, z: 6.98}
+  poses21:
+    pose:
+      position: {x: 24.04, y: 1.31, z: 5.11}
+  poses22:
+    pose:
+      position: {x: 25.25, y: 2.47, z: 4.50}
+  poses23:
+    pose:
+      position: {x: 26.48, y: 2.52, z: 5.94}
+  poses24:
+    pose:
+      position: {x: 27.56, y: 1.59, z: 6.26}
+  poses25:
+    pose:
+      position: {x: 28.81, y: 0.21, z: 7.55}
+tether:
+  length0:  {length: 5.0249}
+  length1:  {length: 5.5613}
+  length2:  {length: 4.0325}
+  length3:  {length: 3.0030}
+  length4:  {length: 3.7020}
+  length5:  {length: 4.2074}
+  length6:  {length: 5.7691}
+  length7:  {length: 6.1470}
+  length8:  {length: 7.6093}
+  length9:  {length: 8.0606}
+  length10: {length: 9.7737}
+  length11: {length: 9.8325}
+  length12: {length: 10.0905}
+  length13: {length: 10.5916}
+  length14: {length: 11.0899}
+  length15: {length: 11.3312}
+  length16: {length: 11.2094}
+  length17: {length: 9.8733}
+  length18: {length: 8.4683}
+  length19: {length: 7.1096}
+  length20: {length: 6.9791}
+  length21: {length: 5.1106}
+  length22: {length: 4.5007}
+  length23: {length: 5.9407}
+  length24: {length: 6.2602}
+  length25: {length: 7.5514}
