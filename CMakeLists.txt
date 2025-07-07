@@ -32,15 +32,25 @@ install(
     share/${PROJECT_NAME}/
 )
 
-# Instalar los scripts de Python
+# Scripts de Python
 install(PROGRAMS
-  scripts/wp_publisher.py
-  scripts/pure_pursuit_visual_coordinator.py
-  scripts/uav_to_point.py
-  scripts/ugv_to_point.py
-  scripts/ugv_to_point_2.py
+
+  # Visualizador
   scripts/dynamic_tf_pub.py
-  scripts/trajectory_coordinator.py
+  scripts/wp_publisher_catenary.py
+
+  # Generador de referencias
+  scripts/pure_pursuit_adaptative.py
+  scripts/pure_pursuit_fixed.py
+
+  # Controladores individuales
+  scripts/uav_control.py
+  scripts/ugv_tether_control.py
+
+  # Coordinador
+  scripts/coordinator.py
+  scripts/future_coordinator.py
+
   DESTINATION lib/${PROJECT_NAME}
 )
 

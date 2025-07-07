@@ -4,10 +4,10 @@ marsupial_ugv:
       position: {x: 0.0, y: 0.0}
   poses1:
     pose:
-      position: {x: 1.2, y: 1.76}
+      position: {x: 0.0, y: 0.0}
   poses2:
     pose:
-      position: {x: 2.4, y: 2.85}
+      position: {x: 0.0, y: 0.0}
   poses3:
     pose:
       position: {x: 3.6, y: 2.85}
@@ -158,8 +158,8 @@ marsupial_uav:
       position: {x: 28.81, y: 0.21, z: 7.55}
 tether:
   length0:  {length: 5.0249}
-  length1:  {length: 5.5613}
-  length2:  {length: 4.0325}
+  length1:  {length: 6.3}
+  length2:  {length: 5.8}
   length3:  {length: 3.0030}
   length4:  {length: 3.7020}
   length5:  {length: 4.2074}
@@ -178,7 +178,7 @@ tether:
   length18: {length: 8.4683}
   length19: {length: 7.1096}
   length20: {length: 6.9791}
-  length21: {length: 5.1106}
+  length21: {length: 5.5106}
   length22: {length: 4.5007}
   length23: {length: 5.9407}
   length24: {length: 6.2602}

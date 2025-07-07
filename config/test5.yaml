@@ -1,4 +1,4 @@
-marsupial_uav:
+marsupial_uav: 
   poses0:
     frame_id: uav
     header: uav0
@@ -3304,3 +3304,5 @@ tether:
     length: 10.432851934373025
     seq: 99
   size: 100
+
+# Máximo de 16.12 m de cuerda (~163 elementos)
