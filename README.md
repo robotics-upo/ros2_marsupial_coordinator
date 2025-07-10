@@ -116,7 +116,7 @@ En caso de que el dron no haya sido desplegado en los primeros segundos tras car
 ros2 topic pub /sjtu_drone/takeoff std_msgs/msg/Empty {} --once 
 ```
 
-### "optimized_path_teatro_wall_opt_r.yaml" - N=0 – LH Fijo - Por tiempo (waypoint de sincronización)
+### Trayectoria 1 - "optimized_path_teatro_wall_opt_r.yaml" - N=0 – LH Fijo - Por tiempo (waypoint de sincronización)
 1º Lanzar entorno de simulación + Pure Pursuit + Visualizador + Despegue Dron 
 ```bash
 ros2 launch ros2_marsupial_coordinator trajectory_follower_fixed_LH.launch.py world:=theatre.world pos_x:=7.8 pos_y:=-1.13 pos_z:=0.0 yaml_filename:=optimized_path_teatro_wall_opt_r.yaml 
@@ -130,7 +130,7 @@ ros2 run ros2_marsupial_coordinator future_coordinator.py --ros-args -p yaml_fil
 ros2 launch ros2_marsupial_coordinator controllers.launch.py 
 ```
 
-### "teatro_mission.yaml" - N=0 – LH Fijo - Por tiempo (waypoint de sincronización)
+### Trayectoria 2 - "teatro_mission.yaml" - N=0 – LH Fijo - Por tiempo (waypoint de sincronización)
 
 1º Lanzar entorno de simulación + Pure Pursuit + Visualizador + Despegue Dron 
 ```bash
@@ -145,7 +145,7 @@ ros2 run ros2_marsupial_coordinator future_coordinator.py --ros-args -p yaml_fil
 ros2 launch ros2_marsupial_coordinator controllers.launch.py  
 ```
 
-### "optimized_path_teatro_wall_opt_r.yaml" - LH Adaptative – Por exceso de waypoint (ajuste fijo de velocidades)
+### Trayectoria 1 - "optimized_path_teatro_wall_opt_r.yaml" - LH Adaptative – Por exceso de waypoint (ajuste fijo de velocidades)
 
 1º Lanzar entorno de simulación + Pure Pursuit + Visualizador + Despegue Dron 
 ```bash
@@ -159,7 +159,7 @@ ros2 run ros2_marsupial_coordinator coordinator.py
 ```bash
 ros2 launch ros2_marsupial_coordinator controllers.launch.py 
 ```
-### "teatro_mission.yaml" - LH Adaptative – Por exceso de waypoint (ajuste fijo de velocidades)
+### Trayectoria 2 - "teatro_mission.yaml" - LH Adaptative – Por exceso de waypoint (ajuste fijo de velocidades)
 1º Lanzar entorno de simulación + Pure Pursuit + Visualizador + Despegue Dron 
 ```bash
 ros2 launch ros2_marsupial_coordinator trajectory_follower_adaptative_LH.launch.py world:=theatre.world pos_x:=-0.5 pos_y:=-1.52 pos_z:=0.0 yaml_filename:=teatro_mission.yaml 
