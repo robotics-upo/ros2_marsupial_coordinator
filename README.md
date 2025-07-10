@@ -7,7 +7,13 @@
 1. [Introducción](#introducción)
 2. [Requisitos previos](#requisitos-previos)
 3. [Experimentos realizados](#experimentos-realizados)
-4. [Validación de experimentos](#validación-de-experimentos)
+   - [Abrir terminal (en contenedor)](#abrir-terminal-en-contenedor)
+   - [Lanzamiento de experimentos](#lanzamiento-de-experimentos)
+     - [optimized_path_teatro_wall_opt_r.yaml - N=0 – LH Fijo - Por tiempo](#optimized_path_teatro_wall_opt_ryaml---n0--lh-fijo---por-tiempo)
+     - [teatro_mission.yaml - N=0 – LH Fijo - Por tiempo](#teatromissionyaml---n0--lh-fijo---por-tiempo)
+     - [optimized_path_teatro_wall_opt_r.yaml - LH Adaptative](#optimized_path_teatro_wall_opt_ryaml---lh-adaptative)
+     - [teatro_mission.yaml - LH Adaptative](#teatro_mission.yaml---lh-adaptative)
+
 
 ---
 
@@ -166,6 +172,3 @@ ros2 run ros2_marsupial_coordinator coordinator.py
 ```bash
 ros2 launch ros2_marsupial_coordinator controllers.launch.py  
 ```
-
-# Validación de experimentos
-Explicación y análisis de resultados.
