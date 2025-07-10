@@ -129,7 +129,11 @@ ros2 run ros2_marsupial_coordinator future_coordinator.py --ros-args -p yaml_fil
 ```bash
 ros2 launch ros2_marsupial_coordinator controllers.launch.py 
 ```
-[![Ver demostración en YouTube](imgs/portada_t1_c1_.png)](https://youtu.be/oFyRatBKpac)
+<p align="center">
+  <a href="https://youtu.be/oFyRatBKpac">
+    <img src="imgs/portada_t1_c1_.png" alt="Ver demostración en YouTube" width="500">
+  </a>
+</p>
 
 ### Trayectoria 2 - "teatro_mission.yaml" - N=0 – LH Fijo - Por tiempo (waypoint de sincronización)
 
@@ -145,8 +149,11 @@ ros2 run ros2_marsupial_coordinator future_coordinator.py --ros-args -p yaml_fil
 ```bash
 ros2 launch ros2_marsupial_coordinator controllers.launch.py
 ```
-[![Ver demostración en YouTube](imgs/portada_t2_c1.png)](https://youtu.be/kdYnqbq4_UQ)
-
+<p align="center">
+  <a href="https://youtu.be/kdYnqbq4_UQ">
+    <img src="imgs/portada_t2_c1.png" alt="Ver demostración en YouTube" width="500">
+  </a>
+</p>
 
 ### Trayectoria 1 - "optimized_path_teatro_wall_opt_r.yaml" - LH Adaptative – Por exceso de waypoint (ajuste fijo de velocidades)
 
@@ -162,8 +169,12 @@ ros2 run ros2_marsupial_coordinator coordinator.py
 ```bash
 ros2 launch ros2_marsupial_coordinator controllers.launch.py 
 ```
+<p align="center">
+  <a href="https://youtu.be/FU3ehg03aek">
+    <img src="imgs/portada_t1_c2.png" alt="Ver demostración en YouTube" width="500">
+  </a>
+</p>
 
-[![Ver demostración en YouTube](imgs/portada_t1_c2.png)](https://youtu.be/FU3ehg03aek)
 ### Trayectoria 2 - "teatro_mission.yaml" - LH Adaptative – Por exceso de waypoint (ajuste fijo de velocidades)
 1º Lanzar entorno de simulación + Pure Pursuit + Visualizador + Despegue Dron 
 ```bash
@@ -177,4 +188,9 @@ ros2 run ros2_marsupial_coordinator coordinator.py
 ```bash
 ros2 launch ros2_marsupial_coordinator controllers.launch.py  
 ```
-[![Ver demostración en YouTube](imgs/portada_t2_c2.png)](https://youtu.be/zSdV9X5I_D4)
+<p align="center">
+  <a href="https://youtu.be/zSdV9X5I_D4">
+    <img src="imgs/portada_t2_c2.png" alt="Ver demostración en YouTube" width="500">
+  </a>
+</p>
+
