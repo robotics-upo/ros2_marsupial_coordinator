@@ -129,7 +129,7 @@ ros2 run ros2_marsupial_coordinator future_coordinator.py --ros-args -p yaml_fil
 ```bash
 ros2 launch ros2_marsupial_coordinator controllers.launch.py 
 ```
-[![Ver demostración en YouTube](imgs/portada_t1_c1.png)](https://youtu.be/oFyRatBKpac)
+[![Ver demostración en YouTube](imgs/portada_t1_c1_.png)](https://youtu.be/oFyRatBKpac)
 
 ### Trayectoria 2 - "teatro_mission.yaml" - N=0 – LH Fijo - Por tiempo (waypoint de sincronización)
 
