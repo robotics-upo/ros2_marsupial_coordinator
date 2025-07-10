@@ -145,7 +145,7 @@ ros2 run ros2_marsupial_coordinator future_coordinator.py --ros-args -p yaml_fil
 ```bash
 ros2 launch ros2_marsupial_coordinator controllers.launch.py
 ```
-[![Ver demostración en YouTube](imgs/portada_t2_c1_.png)](https://youtu.be/kdYnqbq4_UQ)
+[![Ver demostración en YouTube](imgs/portada_t2_c1.png)](https://youtu.be/kdYnqbq4_UQ)
 
 
 ### Trayectoria 1 - "optimized_path_teatro_wall_opt_r.yaml" - LH Adaptative – Por exceso de waypoint (ajuste fijo de velocidades)
