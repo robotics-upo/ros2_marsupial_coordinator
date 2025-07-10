@@ -163,7 +163,7 @@ ros2 run ros2_marsupial_coordinator coordinator.py
 ros2 launch ros2_marsupial_coordinator controllers.launch.py 
 ```
 
-[![Ver demostración en YouTube](imgs/portada_t1_c2.png)](https://youtu.be/ZLzIejSijDM)
+[![Ver demostración en YouTube](imgs/portada_t1_c2.png)](https://youtu.be/FU3ehg03aek)
 ### Trayectoria 2 - "teatro_mission.yaml" - LH Adaptative – Por exceso de waypoint (ajuste fijo de velocidades)
 1º Lanzar entorno de simulación + Pure Pursuit + Visualizador + Despegue Dron 
 ```bash
