@@ -111,7 +111,7 @@ source install/setup.bash
 
 Se ajusta la longitud máxima de la cuerda en 10 m para la realización de los experimentos.
 
-En caso de que el dron no haya sido desplegado en los primeros segundos tras cargar la simulación, se desplega manualmente:
+En caso de que el dron no haya sido desplegado en los primeros segundos tras cargar la simulación, se despliega manualmente:
 ```bash
 ros2 topic pub /sjtu_drone/takeoff std_msgs/msg/Empty {} --once 
 ```
