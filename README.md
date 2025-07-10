@@ -66,7 +66,7 @@ xhost +local:docker
 docker exec -it marsupial_container bash
 ```
 
-3. Instalar algunas dependencias adicionales dentro del contenedor como: [`pycatenary`](https://github.com/tridelat/pycatenary.git) y [`matplotlib`](https://github.com/matplotlib/matplotlib.git)
+4. Instalar algunas dependencias adicionales dentro del contenedor como: [`pycatenary`](https://github.com/tridelat/pycatenary.git) y [`matplotlib`](https://github.com/matplotlib/matplotlib.git)
 ```bash
 pip install pycatenary
 ```
@@ -74,17 +74,17 @@ pip install pycatenary
 pip install matplotlib
 ```
 
-4. Dentro de la carpeta `src` del contenedor, clonar el paquete coordinador [`ros2_marsupial_coordinator`](https://github.com/roblopcor/ros2_marsupial_coordinator)
+5. Dentro de la carpeta `src` del contenedor, clonar el paquete coordinador [`ros2_marsupial_coordinator`](https://github.com/roblopcor/ros2_marsupial_coordinator)
 ```bash
 cd /home/upo/marsupial/src
 git clone https://github.com/roblopcor/ros2_marsupial_coordinator
 ```
 
-5. Ajustar la longitud máxima de la cuerda que aparece por defecto según las características del experimento que se desee realizar. Para ello se modifica dentro del archivo `/marsupial_simulator_ros2/models/tether/tether.sdf.jinja` la línea 4:
+6. Ajustar la longitud máxima de la cuerda que aparece por defecto según las características del experimento que se desee realizar. Para ello se modifica dentro del archivo `/marsupial_simulator_ros2/models/tether/tether.sdf.jinja` la línea 4:
 ```bash
 {%- set number_elements = 100 -%}    {#- Initial: 123; set at 203 for 20 m tether, 101 for 10 m , 162 for 16 m -#}
 ```
-5. Ejecutar los cambios realizados:
+7. Ejecutar los cambios realizados:
 ```bash
 python3 /home/upo/marsupial/src/marsupial_simulator_ros2/scripts/jinja_gen.py /home/upo/marsupial/src/marsupial_simulator_ros2/models/tether/tether.sdf.jinja /home/upo/marsupial/src/marsupial_simulator_ros2/models/tether 
 ```
