@@ -177,3 +177,4 @@ ros2 run ros2_marsupial_coordinator coordinator.py
 ```bash
 ros2 launch ros2_marsupial_coordinator controllers.launch.py  
 ```
+[![Ver demostración en YouTube](imgs/portada_t2_c2.png)](https://youtu.be/zSdV9X5I_D4)
