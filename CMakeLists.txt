@@ -50,6 +50,10 @@ install(PROGRAMS
   # Coordinador
   scripts/coordinator.py
   scripts/future_coordinator.py
+  scripts/future_coordinator_2.py
+
+  # Respuesta en escalón
+  scripts/step.py
 
   DESTINATION lib/${PROJECT_NAME}
 )

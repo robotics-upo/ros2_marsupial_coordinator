@@ -32,8 +32,9 @@ class UGVController(Node):
         
         # === WINCH ===
         # Offset
-        self.winch_position_x = -0.5
-        self.winch_position_z = 0.9
+        self.winch_position_x = 0.35
+        self.winch_position_z = -0.25
+        self.accumulated_time = 0.0  # al inicializar la clase
 
         # Distancia inicial entre winch y UAV y radio del winch
         self.distance = 0.6
@@ -44,9 +45,10 @@ class UGVController(Node):
         self.winch_velocity = 0.0
 
         # Parámetros del PID
-        self.kp_winch = 10.0
-        self.ki_winch = 0.2
-        self.kd_winch = 0.5
+        self.kp_winch = 1.25
+        self.ki_winch = 0.0
+        self.kd_winch = 0.1
+
  
         self.integral_error = 0.0
         self.previous_error = 0.0     
@@ -110,14 +112,21 @@ class UGVController(Node):
             (self.uav_position.position.z - (self.current_position.position.z + self.winch_position_z)) ** 2
         )
 
-        # Referencia del PID como la recibida del Pure Pursuit + Margen de seguridad
-        self.target_length = self.tether_ref_length + self.safety_margin  
+        if self.distance > self.tether_ref_length:
+            # En caso de que la distancia entre el winch y el UAV sea mayor que la longitud de referencia del cable, se ajusta la longitud del cable
+            self.get_logger().warn(f'Distancia entre el winch y el UAV ({self.distance:.3f} m) > ({self.tether_ref_length:.3f} m). Ajustando l cable.')
+            self.target_length = self.distance + self.safety_margin
+        else:
+            # Referencia del PID como la recibida del Pure Pursuit + Margen de seguridad
+            self.target_length = self.tether_ref_length + self.safety_margin  
 
         # Error de longitud
         length_error = self.target_length - self.tether_length
 
         # Salto de tiempo
         self.dt = self.timer_period
+
+        self.accumulated_time += self.dt
 
         self.integral_error += length_error * self.dt
         self.previous_error = length_error
@@ -127,22 +136,34 @@ class UGVController(Node):
         winch_velocity_linear = (self.kp_winch * length_error + self.ki_winch * self.integral_error + self.kd_winch * derivative_error)
 
         # Saturación de la velocidad lineal
-        max_winch_velocity_linear = 0.4482345
+        # if self.accumulated_time < 3.0:
+        #     max_winch_velocity_linear = 0.2
+        # else:
+        #     max_winch_velocity_linear = 0.6  # Velocidad máxima del cabrestante (m/s)
+
+        max_winch_velocity_linear = 1.5  # Velocidad máxima del cabrestante (m/s)
+
         winch_velocity_linear = max(min(winch_velocity_linear, max_winch_velocity_linear), -max_winch_velocity_linear)
 
         # Velocidad angular
         winch_velocity_angular = winch_velocity_linear / self.radius
 
+        if winch_velocity_angular < 0:
+            k_factor = 1.5  # Factor de compensación para velocidad negativa
+            compensated_angular_velocity = winch_velocity_angular * k_factor
+        else:
+            compensated_angular_velocity = winch_velocity_angular
+
         # Saturación de velocidad angular
-        max_winch_velocity_angular = 3.0
-        winch_velocity_angular = max(min(winch_velocity_angular, max_winch_velocity_angular), -max_winch_velocity_angular)
+        #max_winch_velocity_angular = 5.0
+        #winch_velocity_angular = max(min(winch_velocity_angular, max_winch_velocity_angular), -max_winch_velocity_angular)
 
         # Estimación de la longitud del cable para la próxima iteración
         self.tether_length += winch_velocity_angular * self.effective_radius * self.dt
 
         self.get_logger().info(f'Vel linear: {winch_velocity_linear:.5f}, vel angular {winch_velocity_angular:.5f}, dt: {self.dt:.5f}')
 
-        return winch_velocity_angular, length_error
+        return compensated_angular_velocity, length_error
     
     def control_loop(self):
         if self.current_position is None or self.uav_position is None or self.target_position is None:
@@ -175,7 +196,7 @@ class UGVController(Node):
 
         # === PUBLICACIÓN ===
         pos_msg.data = [float(steering_angle), float(steering_angle), float(steering_angle), float(steering_angle)]
-        vel_msg.data = [float(control_xy), float(control_xy), float(control_xy), float(control_xy), float((self.winch_velocity)*(self.k*self.effective_radius))]
+        vel_msg.data = [float(control_xy), float(control_xy), float(control_xy), float(control_xy), float((self.winch_velocity))]
         cable_length_msg.data = [float(self.tether_length), float(self.target_length), float(self.distance)]
 
         self.pub_pos.publish(pos_msg)

@@ -25,11 +25,11 @@ class SyncCoordinator(Node):
 
         # Parámetros de sincronización
         self.nominal_uav_speed = 0.5  # m/s
-        self.nominal_ugv_speed = 0.5  # m/s
+        self.nominal_ugv_speed = 2.0  # m/s
         self.max_overshoot = 1        # número máximo de waypoints de ventaja o desventaja permitida
         self.min_speed = 0.2
-        self.max_speed_uav = 1.0
-        self.max_speed_ugv = 4.0
+        self.max_speed_uav = 0.5
+        self.max_speed_ugv = 2.0
 
         # Inicializar índices
         self.uav_wp_index = 0
@@ -38,6 +38,11 @@ class SyncCoordinator(Node):
         self.cable_length = 0.6  
         self.target_cable_length = 0.0
         self.distance = 0.0
+
+        # Factores de reduccion de velocidad
+        self.reduction_factor = 0.1  # Fija la velocidad en caso de reducción en un 10% de la que llevaba
+        self.speed_factor_ugv = 3.0  # Aumenta la velocidad del UGV en un 200%
+        self.speed_factor_uav = 1.5  # Aumenta la velocidad del UAV en un 50% 
 
         # Temporizador
         timer_period = 0.05
@@ -77,14 +82,14 @@ class SyncCoordinator(Node):
         # Si el UAV va muy adelantado
         if delta > self.max_overshoot:
             self.get_logger().warn("UAV va demasiado adelantado, frenando UAV y acelerando UGV.")
-            uav_speed *= 0.1  # frena el UAV
-            ugv_speed *= 3.0  # acelera el UGV
+            uav_speed *= self.reduction_factor  # frena el UAV
+            ugv_speed *= self.speed_factor_ugv  # acelera el UGV
 
         # Si el UGV va demasiado adelantado
         elif delta < -self.max_overshoot:
             self.get_logger().warn("UGV va demasiado adelantado, frenando UGV y acelerando UAV.")
-            uav_speed *= 1.5  # acelera el UAV
-            ugv_speed *= 0.1  # frena el UGV
+            uav_speed *= self.speed_factor_uav  # acelera el UAV
+            ugv_speed *= self.reduction_factor  # frena el UGV
 
         # Saturación de velocidades
         uav_speed = min(max(uav_speed, self.min_speed), self.max_speed_uav)

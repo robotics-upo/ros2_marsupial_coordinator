@@ -14,9 +14,8 @@ class DroneController(Node):
         self.current_position = None
         self.desired_speed_xy = 0.0
         self.desired_speed_z = 0.0
-        self.tolerance = 0.1
 
-        timer_period = 0.02
+        timer_period = 0.02 # 50 Hz
 
         self.pose_subscriber = self.create_subscription(Pose, '/sjtu_drone/gt_pose', self.pose_callback, 10)
         self.target_subscriber = self.create_subscription(Pose, '/uav/reference_pose', self.target_callback, 10)
@@ -51,28 +50,17 @@ class DroneController(Node):
         direction_z = self.target_position.position.z - self.current_position.z
 
         distance_xy = math.hypot(direction_x, direction_y)
-        distance_to_target = math.sqrt(direction_x**2 + direction_y**2 + direction_z**2)
         
         cmd_vel = Twist()
 
-        # La tolerancia es inferior a la lookahead distance del Pure Pursuit, por lo que se detiene en el último punto
-        if distance_to_target < self.tolerance: 
-            cmd_vel.linear.x = 0.0
-            cmd_vel.linear.y = 0.0
-            cmd_vel.linear.z = 0.0
-        else:
-            if distance_xy > 0.001:
-                control_x = (direction_x / distance_xy) * self.desired_speed_xy
-                control_y = (direction_y / distance_xy) * self.desired_speed_xy
-            else:
-                control_x = 0.0
-                control_y = 0.0
+        control_x = (direction_x / distance_xy) * self.desired_speed_xy
+        control_y = (direction_y / distance_xy) * self.desired_speed_xy
+        control_z = (direction_z / abs(direction_z)) * self.desired_speed_z
 
-            control_z = (direction_z / abs(direction_z)) * self.desired_speed_z if abs(direction_z) > 0.001 else 0.0
+        cmd_vel.linear.x = control_x
+        cmd_vel.linear.y = control_y
+        cmd_vel.linear.z = control_z
 
-            cmd_vel.linear.x = control_x
-            cmd_vel.linear.y = control_y
-            cmd_vel.linear.z = control_z
 
         self.velocity_publisher.publish(cmd_vel)
 

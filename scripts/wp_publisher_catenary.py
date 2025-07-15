@@ -10,16 +10,28 @@ import sys
 from math import sqrt
 from pycatenary import cable
 import numpy as np
+from std_msgs.msg import Float32MultiArray
 
 class WaypointPublisher(Node):
     def __init__(self, yaml_filename='trajectory.yaml'):
         super().__init__('waypoint_publisher')
+
+        # Publicador de las longitudes objetivo modificadas para garantizarse el calculo de catenarias
+        self.waypoints_length_pub = self.create_publisher(Float32MultiArray, 'modified_tether_length', 10)
+ 
+        self.ugv_initial_height = 0.275  # Altura del UGV
         self.precomputed_markers = None
         self.yaml_filename = yaml_filename
         self.publisher_ = self.create_publisher(MarkerArray, 'waypoints', 100)
         self.timer = self.create_timer(0.2, self.timer_callback)
         self.load_waypoints()
         self.precomputed_markers = self.compute_all_markers()
+        self.publish_waypoints_length()
+
+    def publish_waypoints_length(self):
+        msg = Float32MultiArray()
+        msg.data = self.waypoints_length  
+        self.waypoints_length_pub.publish(msg)
 
     # === CÓMPUTO DE TODOS LOS WAYPOINTS ===
     def compute_all_markers(self):
@@ -28,7 +40,7 @@ class WaypointPublisher(Node):
         marker_cable_id = 0
 
         for i in range(min(len(self.waypoints_ugv), len(self.waypoints_uav))):
-            ugv_x, ugv_y = self.waypoints_ugv[i]
+            ugv_x, ugv_y, ugv_z = self.waypoints_ugv[i]
             uav_x, uav_y, uav_z = self.waypoints_uav[i]
 
             # === UGV Marker (2D) ===
@@ -42,7 +54,7 @@ class WaypointPublisher(Node):
             ugv_marker.action = Marker.ADD
             ugv_marker.pose.position.x = ugv_x
             ugv_marker.pose.position.y = ugv_y
-            ugv_marker.pose.position.z = 0.0
+            ugv_marker.pose.position.z = ugv_z
             ugv_marker.scale.x = 0.1
             ugv_marker.scale.y = 0.1
             ugv_marker.scale.z = 0.1
@@ -74,8 +86,8 @@ class WaypointPublisher(Node):
             marker_array.markers.append(uav_marker)
 
             # === Offset UGV-WINCH Marker ===
-            offset_ugv_z = 0.9
-            offset_ugv_x = -0.5
+            offset_ugv_z = 0.35
+            offset_ugv_x = -0.25
 
             offset_marker = Marker()
             offset_marker.header.frame_id = "world"
@@ -87,7 +99,7 @@ class WaypointPublisher(Node):
             offset_marker.action = Marker.ADD
             offset_marker.pose.position.x = float(ugv_x + offset_ugv_x)
             offset_marker.pose.position.y = float(ugv_y)
-            offset_marker.pose.position.z = float(offset_ugv_z)
+            offset_marker.pose.position.z = float(offset_ugv_z + self.ugv_initial_height)
             offset_marker.scale.x = 0.1
             offset_marker.scale.y = 0.1
             offset_marker.scale.z = 0.1
@@ -98,7 +110,7 @@ class WaypointPublisher(Node):
             marker_array.markers.append(offset_marker)
 
             # === Catenaria ===
-            anchor_point = (ugv_x + offset_ugv_x, ugv_y, offset_ugv_z)
+            anchor_point = (ugv_x + offset_ugv_x, ugv_y, offset_ugv_z + self.ugv_initial_height)
             fairlead_point = (uav_x, uav_y, uav_z)
             cable_length = self.waypoints_length[i]
 
@@ -108,8 +120,9 @@ class WaypointPublisher(Node):
             distance = sqrt(dx**2 + dy**2 + dz**2)
 
             if distance >= cable_length:
-                #self.get_logger().warn(f"[Waypoint {i}] Distancia ({distance:.2f} m) >= Longitud cuerda ({cable_length:.2f} m): ¡NO se puede formar una catenaria!")
+                #self.get_logger().warn(f"[Waypoint {i}] Distancia ({distance:.2f} m) >= Longitud cuerda ({cable_length:.2f} m): NO se puede formar una catenaria")
                 cable_length = distance + 0.3
+                self.waypoints_length[i] = cable_length
 
             catenary_points = self.generate_catenary_points(anchor_point, fairlead_point, cable_length, i, distance)
 
@@ -152,7 +165,7 @@ class WaypointPublisher(Node):
         ugv_data = yaml_data['marsupial_ugv']
         ugv_keys = sorted([k for k in ugv_data if k.startswith('poses') and k[5:].isdigit()],
                         key=lambda x: int(x[5:]))
-        self.waypoints_ugv = [(float(ugv_data[k]['pose']['position']['x']), float(ugv_data[k]['pose']['position']['y'])) for k in ugv_keys]
+        self.waypoints_ugv = [(float(ugv_data[k]['pose']['position']['x']), float(ugv_data[k]['pose']['position']['y']), self.ugv_initial_height) for k in ugv_keys]
         
         self.get_logger().info('UGV waypoints cargados:')
         self.get_logger().info(f"{self.waypoints_ugv}")
@@ -211,6 +224,8 @@ class WaypointPublisher(Node):
     def timer_callback(self):
         if self.precomputed_markers:
             self.publisher_.publish(self.precomputed_markers)
+
+        #self.publish_waypoints_length()
 
 def main(args=None):
     rclpy.init(args=args)

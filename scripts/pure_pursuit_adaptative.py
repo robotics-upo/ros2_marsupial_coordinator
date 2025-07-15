@@ -8,7 +8,7 @@ import os
 import yaml
 from visualization_msgs.msg import Marker, MarkerArray
 from geometry_msgs.msg import Point
-from std_msgs.msg import Float64
+from std_msgs.msg import Float64, Float32MultiArray, Float32
 import sys
 from std_msgs.msg import Empty
 from std_msgs.msg import Int32
@@ -69,6 +69,10 @@ class UGV_UAV_PurePursuitNode(Node):
     def __init__(self, yaml_filename='trajectory.yaml'):
         super().__init__('ugv_uav_pure_pursuit_node')
 
+        self.waypoints_tether = None
+
+        self.ugv_initial_height = 0.275  # Altura del UGV
+
         self.yaml_filename = yaml_filename
 
         self.current_pose_uav = None
@@ -81,16 +85,13 @@ class UGV_UAV_PurePursuitNode(Node):
 
         # Comportamiento del lookahead adaptativo UAV
         self.lookahead_uav_min = 0.3
-        self.lookahead_uav_max = 1.0
+        self.lookahead_uav_max = 0.8
         self.lookahead_decay_rate = 0.3   # penalizacion
 
         # Comportamiento del lookahead adaptativo del UGV
-        self.lookahead_ugv_min = 0.3
+        self.lookahead_ugv_min = 0.1
         self.lookahead_ugv_max = 1.0
         self.lookahead_decay_rate_ugv = 0.3
-
-        # Threshold de wp antes de penalizar
-        self.lookahead_threshold = 2
 
         # Indices de los waypoints 
         self.ugv_wp_index = 0
@@ -100,7 +101,6 @@ class UGV_UAV_PurePursuitNode(Node):
         # Guardamos en una lista todas las coordenadas de todos los waypoints, para UGV, UAV y CABLE (tether)
         self.waypoints_ugv = self.load_waypoints_UGV()
         self.waypoints_uav = self.load_waypoints_UAV()
-        self.waypoints_tether = self.load_waypoints_length()
         
         # Pasamos esa lista a nuestro pure pursuit para que se inicie correctamente (con una lh distance inicial en 0.5m en este caso)
         self.pure_pursuit_ugv = PurePursuit(self.waypoints_ugv, lookahead_distance=0.5)
@@ -111,6 +111,8 @@ class UGV_UAV_PurePursuitNode(Node):
         # Radios visibles de la lookahead distance
         self.pub_radius_ugv = self.create_publisher(Marker, '/ugv/radius', 10)
         self.pub_radius_uav = self.create_publisher(Marker, '/uav/radius', 10)
+        self.pub_radius_distance_ugv = self.create_publisher(Float32, '/ugv/distance', 10)
+        self.pub_radius_distance_uav = self.create_publisher(Float32, '/uav/distance', 10)
 
         # Publicador para ver el lookahead point UGV, UAV y CABLE que se está siguiendo
         self.lookahead_marker_pub_ugv = self.create_publisher(Marker, '/ugv/lookahead_marker', 10)
@@ -124,6 +126,9 @@ class UGV_UAV_PurePursuitNode(Node):
         self.wp_tether_index_publisher = self.create_publisher(Int32, '/tether/waypoint_index', 10)
         
         # === SUSCRIPCIONES ===
+
+        # Suscripción a la longitud modificada por wp publisher (segura)
+        self.subscription = self.create_subscription(Float32MultiArray, 'modified_tether_length', self.listener_callback, 10)
         
         # Suscripción al topic que informa de la posición gt del UGV y UAV
         self.create_subscription(Pose, 'rs_robot/ugv_gt_pose', self.pose_callback_ugv, 10)
@@ -136,6 +141,10 @@ class UGV_UAV_PurePursuitNode(Node):
 
         # Información de los marcadores de waypoints ya publicados (obtener datos de las catenarias)
         self.subscriber_ = self.create_subscription(MarkerArray, 'waypoints', self.marker_callback, 10)
+
+    def listener_callback(self, msg: Float32MultiArray):
+        self.waypoint_list = list(msg.data)
+        self.waypoints_tether = self.waypoint_list
 
     # === CALLBACK DE WAYPOINTS PARA ACCESO A CATENARIAS ===
     def marker_callback(self, msg):
@@ -172,21 +181,6 @@ class UGV_UAV_PurePursuitNode(Node):
 
         return yaml_data
 
-    def load_waypoints_length(self):
-        yaml_data = self.load_yaml_data(self.yaml_filename)
-        tether_data = yaml_data['tether']
-
-        waypoint_list = []
-
-        poses_keys = [k for k in tether_data.keys() if k.startswith("length") and k[6:].isdigit()]
-        poses_keys_sorted = sorted(poses_keys, key=lambda k: int(k[6:]))
-
-        for key in poses_keys_sorted:
-            l = tether_data[key]['length']
-            waypoint_list.append(float(l))
-
-        return waypoint_list
-
     def load_waypoints_UGV(self):
         yaml_data = self.load_yaml_data(self.yaml_filename)
 
@@ -198,7 +192,7 @@ class UGV_UAV_PurePursuitNode(Node):
 
         for key in poses_keys_sorted:
             pos = ugv_data[key]['pose']['position']
-            waypoint_list.append((float(pos['x']), float(pos['y'])))
+            waypoint_list.append((float(pos['x']), float(pos['y']), self.ugv_initial_height))
 
         return waypoint_list
     
@@ -218,11 +212,11 @@ class UGV_UAV_PurePursuitNode(Node):
         return waypoint_list
     
     # === PUBLICADOR DE LOOKAHEAD POINT ===
-    def publish_lookahead_marker(self, lookahead, is_3d, namespace, marker_id, publisher):
+    def publish_lookahead_marker(self, lookahead, namespace, marker_id, publisher):
 
         # Offset en los ejes x y z del UGV para hallar el centro del cabrestante
-        offset_ugv_z = 0.9
-        offset_ugv_x = -0.5
+        offset_ugv_z = 0.35
+        offset_ugv_x = -0.25
 
         # Marcador
         marker = Marker()
@@ -236,11 +230,11 @@ class UGV_UAV_PurePursuitNode(Node):
         # Posición 
         marker.pose.position.x = lookahead[0]
         marker.pose.position.y = lookahead[1]
-        marker.pose.position.z = lookahead[2] if is_3d else 0.0
+        marker.pose.position.z = lookahead[2]
 
         # En caso de ser el marcador de cabrestante se computa el offset
         if(marker_id==3): 
-            marker.pose.position.z = offset_ugv_z
+            marker.pose.position.z = offset_ugv_z + self.ugv_initial_height
             marker.pose.position.x = lookahead[0] + offset_ugv_x
 
         # Tamaño
@@ -253,7 +247,7 @@ class UGV_UAV_PurePursuitNode(Node):
             marker.scale.x = 0.15
             marker.scale.y = 0.15
             marker.scale.z = 0.15
-
+ 
         # Color
         marker.color.r = 0.0
         marker.color.g = 1.0
@@ -364,10 +358,11 @@ class UGV_UAV_PurePursuitNode(Node):
         self.current_pose_ugv = (msg.position.x, msg.position.y, 0.0)
         
         # Calculo índice objetivo del cable
-        self.update_tether_index()
-        target_length = Float64()
-        target_length.data = self.waypoints_tether[self.tether_wp_index]  
-        self.pub_reference_length.publish(target_length)
+        if self.waypoints_tether is not None:
+            self.update_tether_index()
+            target_length = Float64()
+            target_length.data = self.waypoints_tether[self.tether_wp_index]  
+            self.pub_reference_length.publish(target_length)
 
         # Crea y publica mensaje
         msg = Int32()
@@ -379,21 +374,21 @@ class UGV_UAV_PurePursuitNode(Node):
             adaptive_lookahead_ugv = self.compute_adaptive_lookahead_ugv()
             self.pure_pursuit_ugv.lookahead_distance = adaptive_lookahead_ugv
 
-        lookahead = self.pure_pursuit_ugv.find_lookahead_point_2D(current_position)
+            lookahead = self.pure_pursuit_ugv.find_lookahead_point_2D(current_position)
 
-        # Crea el mensaje de referencia
-        ref_pose = Pose()
-        ref_pose.position.x = lookahead[0]
-        ref_pose.position.y = lookahead[1]
-        ref_pose.position.z = 0.0
-        ref_pose.orientation.w = 1.0 # Orientación como identidad
+            # Crea el mensaje de referencia
+            ref_pose = Pose()
+            ref_pose.position.x = lookahead[0]
+            ref_pose.position.y = lookahead[1]
+            ref_pose.position.z = lookahead[2] 
+            ref_pose.orientation.w = 1.0 # Orientación como identidad
 
-        # Publicación de referencia para el controlador del UGV
-        self.reference_pub_ugv.publish(ref_pose)
+            # Publicación de referencia para el controlador del UGV
+            self.reference_pub_ugv.publish(ref_pose)
 
-        # Publicación de marcadores visuales
-        self.publish_lookahead_marker(lookahead, is_3d=False, namespace="ugv_lookahead", marker_id=1, publisher=self.lookahead_marker_pub_ugv)
-        self.publish_lookahead_marker(lookahead, is_3d=False, namespace="ugv_winch_lookahead", marker_id=3, publisher=self.lookahead_marker_pub_ugv_winch)
+            # Publicación de marcadores visuales
+            self.publish_lookahead_marker(lookahead, namespace="ugv_lookahead", marker_id=1, publisher=self.lookahead_marker_pub_ugv)
+            self.publish_lookahead_marker(lookahead, namespace="ugv_winch_lookahead", marker_id=3, publisher=self.lookahead_marker_pub_ugv_winch)
 
         # Actualización del índice de waypoint UGV
         self.ugv_wp_index = self.pure_pursuit_ugv.get_current_index()
@@ -404,6 +399,7 @@ class UGV_UAV_PurePursuitNode(Node):
         # Publicación de radios como lookahead distance del UGV
         radius = self.pure_pursuit_ugv.get_lookahead_distance()
         self.publish_radius_marker(radius, "base_link", self.pub_radius_ugv, "ugv_sphere")
+        self.pub_radius_distance_ugv.publish(Float32(data=radius))
 
     # === CALLBACK UAV ===
     def pose_callback_uav(self, msg):
@@ -431,7 +427,7 @@ class UGV_UAV_PurePursuitNode(Node):
 
         # Publicación de referencia para el controlador UAV
         self.reference_pub_uav.publish(ref_pose)
-        self.publish_lookahead_marker(lookahead, is_3d=True, namespace="uav_lookahead", marker_id=2, publisher=self.lookahead_marker_pub_uav)
+        self.publish_lookahead_marker(lookahead, namespace="uav_lookahead", marker_id=2, publisher=self.lookahead_marker_pub_uav)
 
         # Actualizo el índice de waypoint UAV
         self.uav_wp_index = self.pure_pursuit_uav.get_current_index()
@@ -442,6 +438,7 @@ class UGV_UAV_PurePursuitNode(Node):
         # Publicación de radios como lookahead distance del UAV
         radius = self.pure_pursuit_uav.get_lookahead_distance()
         self.publish_radius_marker(radius, "uav_base_link", self.pub_radius_uav, "uav_sphere")
+        self.pub_radius_distance_uav.publish(Float32(data=radius))
 
 def main(args=None):
     rclpy.init(args=args)
