@@ -116,48 +116,6 @@ En caso de que el dron no haya sido desplegado en los primeros segundos tras car
 ros2 topic pub /sjtu_drone/takeoff std_msgs/msg/Empty {} --once 
 ```
 
-### Trayectoria 1 - "optimized_path_teatro_wall_opt_r.yaml" - N=0 – LH Fijo - Por tiempo (waypoint de sincronización)
-1º Lanzar entorno de simulación + Pure Pursuit + Visualizador + Despegue Dron 
-```bash
-ros2 launch ros2_marsupial_coordinator trajectory_follower_fixed_LH.launch.py world:=theatre.world pos_x:=7.8 pos_y:=-1.13 pos_z:=0.0 yaml_filename:=optimized_path_teatro_wall_opt_r.yaml 
-```
-2º Escoger el método coordinador 
-```bash
-ros2 run ros2_marsupial_coordinator future_coordinator.py --ros-args -p yaml_filename:=optimized_path_teatro_wall_opt_r.yaml -p N:=0 
-```
-3º Ejecutar controladores individuales 
-```bash
-ros2 launch ros2_marsupial_coordinator controllers.launch.py 
-```
-<div align="center">
-  <a href="https://youtu.be/oFyRatBKpac">
-    <img src="imgs/portada_t1_c1_.png" alt="Ver demostración en YouTube" width="500">
-  </a>
-   <p><em> Vídeo 1: optimized_path_teatro_wall_opt_r.yaml - LH Fijo - N=0 </em></p>
-</p> 
-</div>
-
-### Trayectoria 2 - "teatro_mission.yaml" - N=0 – LH Fijo - Por tiempo (waypoint de sincronización)
-
-1º Lanzar entorno de simulación + Pure Pursuit + Visualizador + Despegue Dron 
-```bash
-ros2 launch ros2_marsupial_coordinator trajectory_follower_fixed_LH.launch.py world:=theatre.world pos_x:=-0.5 pos_y:=-1.52 pos_z:=0.0 yaml_filename:=teatro_mission.yaml 
-```
-2º Escoger el método coordinador 
-```bash
-ros2 run ros2_marsupial_coordinator future_coordinator.py --ros-args -p yaml_filename:=teatro_mission.yaml -p N:=0 
-```
-3º Ejecutar controladores individuales 
-```bash
-ros2 launch ros2_marsupial_coordinator controllers.launch.py
-```
-<div align="center">
-  <a href="https://youtu.be/kdYnqbq4_UQ">
-    <img src="imgs/portada_t2_c1.png" alt="Ver demostración en YouTube" width="500">
-  </a>
-  <p><em> Vídeo 2: teatro_mission.yaml - LH Fijo - N=0</em></p>
-</p>
-</div>
 
 ### Trayectoria 1 - "optimized_path_teatro_wall_opt_r.yaml" - LH Adaptative – Por exceso de waypoint (ajuste fijo de velocidades)
 
@@ -199,5 +157,48 @@ ros2 launch ros2_marsupial_coordinator controllers.launch.py
     <img src="imgs/portada_t2_c2.png" alt="Ver demostración en YouTube" width="500">
   </a>
 <p><em> Vídeo 4: teatro_mission.yaml - LH adaptativo - max_overshoot=1 </em></p>
+</p>
+</div>
+
+### Trayectoria 1 - "optimized_path_teatro_wall_opt_r.yaml" - N=0 – LH Fijo - Por tiempo (waypoint de sincronización)
+1º Lanzar entorno de simulación + Pure Pursuit + Visualizador + Despegue Dron 
+```bash
+ros2 launch ros2_marsupial_coordinator trajectory_follower_fixed_LH.launch.py world:=theatre.world pos_x:=7.8 pos_y:=-1.13 pos_z:=0.0 yaml_filename:=optimized_path_teatro_wall_opt_r.yaml 
+```
+2º Escoger el método coordinador 
+```bash
+ros2 run ros2_marsupial_coordinator future_coordinator.py --ros-args -p yaml_filename:=optimized_path_teatro_wall_opt_r.yaml -p N:=0 
+```
+3º Ejecutar controladores individuales 
+```bash
+ros2 launch ros2_marsupial_coordinator controllers.launch.py 
+```
+<div align="center">
+  <a href="https://youtu.be/oFyRatBKpac">
+    <img src="imgs/portada_t1_c1_.png" alt="Ver demostración en YouTube" width="500">
+  </a>
+   <p><em> Vídeo 1: optimized_path_teatro_wall_opt_r.yaml - LH Fijo - N=0 </em></p>
+</p> 
+</div>
+
+### Trayectoria 2 - "teatro_mission.yaml" - N=0 – LH Fijo - Por tiempo (waypoint de sincronización)
+
+1º Lanzar entorno de simulación + Pure Pursuit + Visualizador + Despegue Dron 
+```bash
+ros2 launch ros2_marsupial_coordinator trajectory_follower_fixed_LH.launch.py world:=theatre.world pos_x:=-0.5 pos_y:=-1.52 pos_z:=0.0 yaml_filename:=teatro_mission.yaml 
+```
+2º Escoger el método coordinador 
+```bash
+ros2 run ros2_marsupial_coordinator future_coordinator.py --ros-args -p yaml_filename:=teatro_mission.yaml -p N:=0 
+```
+3º Ejecutar controladores individuales 
+```bash
+ros2 launch ros2_marsupial_coordinator controllers.launch.py
+```
+<div align="center">
+  <a href="https://youtu.be/kdYnqbq4_UQ">
+    <img src="imgs/portada_t2_c1.png" alt="Ver demostración en YouTube" width="500">
+  </a>
+  <p><em> Vídeo 2: teatro_mission.yaml - LH Fijo - N=0</em></p>
 </p>
 </div>
