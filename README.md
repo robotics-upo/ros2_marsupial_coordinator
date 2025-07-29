@@ -44,7 +44,7 @@ Para preparar el entorno de simulación, es necesario disponer de un ordenador c
 docker build -t marsupial_image .
 ```
 
-2. Crear un contenedor `marsupial_container` con acceso a la GPU, soporte para interfaz X11 y un volumen montado de forma que se comparta la carpeta local `/home/roberto/docker` con los paquetes instalados dentro de la ruta en el contenedor `/home/upo/marsupial/src`. Estas dos rutas pueden cambiarse de la forma que mejor se adapte al usuario:
+2. Crear un contenedor `marsupial_container` con acceso a la GPU, soporte para interfaz X11 y un volumen montado de forma que se comparta la carpeta local `$HOME/docker` con los paquetes instalados dentro de la ruta en el contenedor `/home/upo/marsupial/src`. Estas dos rutas pueden cambiarse de la forma que mejor se adapte al usuario:
 ```bash
 sudo docker run -it \
   --gpus all \
@@ -53,7 +53,7 @@ sudo docker run -it \
   --env NVIDIA_DRIVER_CAPABILITIES=all \
   --env QT_X11_NO_MITSHM=1 \
   --volume /tmp/.X11-unix:/tmp/.X11-unix \
-  --volume /home/roberto/docker:/home/upo/marsupial/src \ 
+  --volume $HOME/docker:/home/upo/marsupial/src \ 
   --device /dev/dri \
   --name marsupial_container \
   marsupial_image
